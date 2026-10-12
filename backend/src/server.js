@@ -17,8 +17,8 @@ app.use(helmet());
 app.use(cors({ origin: env.clientUrl, credentials: true }));
 app.use(compression());
 app.use(cookieParser());
-// NOTE: Razorpay webhook needs the raw body; it will be mounted before this in Step 10.
-app.use(express.json({ limit: '1mb' }));
+// The payment webhook signature is computed over the exact raw bytes, so keep them next to the parsed body
+app.use(express.json({ limit: '1mb', verify: (req, res, buf) => { req.rawBody = buf; } }));
 if (!env.isProd) app.use(morgan('dev'));
 
 app.use('/api', rateLimit({ windowMs: 15 * 60 * 1000, max: 600, standardHeaders: true, legacyHeaders: false }));
@@ -27,4 +27,7 @@ app.use('/api', routes);
 app.use(notFound);
 app.use(errorHandler);
 
-app.listen(env.port, () => console.log(`LocalMart API running on port ${env.port}`));
+app.listen(env.port, () => {
+  console.log(`LocalMart API running on port ${env.port}`);
+  require('./modules/payments/payments.jobs').start();
+});

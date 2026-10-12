@@ -1,7 +1,8 @@
-import { MapPin, Search, ShoppingCart, ChevronDown, User } from 'lucide-react';
+import { MapPin, Search, ChevronDown, User } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { openSheet } from '../../store/locationSlice';
+import CartLink from '../cart/CartLink';
 
 export default function Navbar() {
   const user = useSelector((s) => s.auth.user);
@@ -24,9 +25,7 @@ export default function Navbar() {
           <Link to={user ? '/profile' : '/login'} className="hidden h-11 items-center gap-2 rounded-full px-3 text-sm font-semibold hover:bg-white/10 md:flex">
             <User className="h-5 w-5" />{user ? user.name.split(' ')[0] : 'Login'}
           </Link>
-          <Link to="/cart" aria-label="Cart" className="flex h-11 w-11 items-center justify-center rounded-full hover:bg-white/10">
-            <ShoppingCart className="h-6 w-6" />
-          </Link>
+          <CartLink className="flex h-11 w-11 items-center justify-center rounded-full hover:bg-white/10" />
         </div>
         <Link to="/search" className="order-last flex h-11 w-full items-center gap-2 rounded-xl bg-white px-3 text-sm text-ink-mute md:order-2 md:ml-4 md:flex-1">
           <Search className="h-5 w-5 shrink-0" /><span className="truncate">Search shoes, accessories, sellers…</span>

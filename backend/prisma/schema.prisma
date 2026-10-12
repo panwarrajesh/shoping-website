@@ -591,8 +591,8 @@ model Payment {
   amount          Decimal       @db.Decimal(10, 2)
   currency        String        @default("INR")
   gateway         String?       // razorpay
-  gatewayOrderId  String?       @unique
-  gatewayPaymentId String?      @unique
+  gatewayOrderId  String?
+  gatewayPaymentId String?
   gatewaySignature String?
   failureReason   String?
   rawWebhook      Json?
@@ -603,6 +603,8 @@ model Payment {
   refunds         Refund[]
   @@index([orderId])
   @@index([status])
+  @@index([gatewayOrderId])
+  @@index([gatewayPaymentId])
 }
 
 model SellerSettlement {

@@ -13,6 +13,8 @@ import { productService } from '../services/productService';
 import { cn, rupee } from '../utils/cn';
 import { locationParams } from '../utils/location';
 import { openSheet } from '../store/locationSlice';
+import { addItem } from '../store/cartSlice';
+import CartLink from '../components/cart/CartLink';
 
 function Chip({ active, disabled, children, ...rest }) {
   return (
@@ -64,9 +66,15 @@ export default function ProductDetail() {
     if (variant && !variant.inStock) { toast.error('Yeh option abhi stock mein nahi hai'); return false; }
     return true;
   };
-  // Cart and checkout are built in Steps 8-10
-  const addToCart = () => { if (requireVariant()) toast.success('Cart abhi ban raha hai. Jaldi aa raha hai!'); };
-  const buyNow = () => { if (requireVariant()) toast.success('Checkout abhi ban raha hai. Jaldi aa raha hai!'); };
+  const addToCart = async () => {
+    if (!requireVariant()) return false;
+    const r = await dispatch(addItem({ variantId: variant.id, quantity: 1 }));
+    if (addItem.rejected.match(r)) { toast.error(r.payload || 'Cart mein add nahi ho paya'); return false; }
+    toast.success(r.payload.notice || 'Cart mein add ho gaya');
+    return true;
+  };
+  // Checkout arrives in Step 9; until then Buy Now adds the item and opens the cart
+  const buyNow = async () => { if (await addToCart()) navigate('/cart'); };
 
   if (error === 'notfound') {
     return <div className="mx-auto max-w-lg p-4"><EmptyState icon={PackageX} title="Yeh product nahi mila" text="Ho sakta hai seller ne isse hata diya ho." action={<Link to="/"><Button>Home par jao</Button></Link>} /></div>;
@@ -92,7 +100,7 @@ export default function ProductDetail() {
           <Link to="/" className="mr-auto px-2 text-lg font-extrabold text-brand-600">LocalMart</Link>
           {p && <button onClick={() => toggle(p)} aria-label="Wishlist" className="flex h-11 w-11 items-center justify-center rounded-full hover:bg-surface-alt">
             <Heart className={cn('h-6 w-6', has(p.id) && 'fill-danger text-danger')} /></button>}
-          <Link to="/cart" aria-label="Cart" className="flex h-11 w-11 items-center justify-center rounded-full hover:bg-surface-alt"><ShoppingCart className="h-6 w-6" /></Link>
+          <CartLink className="flex h-11 w-11 items-center justify-center rounded-full hover:bg-surface-alt" />
         </div>
       </header>
 

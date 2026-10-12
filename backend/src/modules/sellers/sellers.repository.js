@@ -64,11 +64,12 @@ const dashboardStats = async (sellerId) => {
   const startOfDay = new Date();
   startOfDay.setHours(0, 0, 0, 0);
   const own = { sellerId };
+  const paidOrCod = { NOT: { paymentMethod: 'ONLINE', paymentStatus: { in: ['PENDING', 'FAILED'] } } };
   const [products, activeProducts, pendingOrders, todayOrders, sales, settlement, lowStock] = await Promise.all([
     prisma.product.count({ where: { ...own, deletedAt: null } }),
     prisma.product.count({ where: { ...own, deletedAt: null, status: 'ACTIVE' } }),
-    prisma.order.count({ where: { ...own, status: { in: ['PENDING', 'CONFIRMED'] } } }),
-    prisma.order.count({ where: { ...own, createdAt: { gte: startOfDay } } }),
+    prisma.order.count({ where: { ...own, ...paidOrCod, status: { in: ['PENDING', 'CONFIRMED'] } } }),
+    prisma.order.count({ where: { ...own, ...paidOrCod, createdAt: { gte: startOfDay } } }),
     prisma.order.aggregate({ where: { ...own, status: 'DELIVERED' }, _sum: { total: true } }),
     prisma.sellerSettlement.aggregate({ where: { ...own, status: 'PENDING' }, _sum: { netAmount: true } }),
     // "low stock" = 5 or fewer units left (per-variant thresholds come with inventory management)

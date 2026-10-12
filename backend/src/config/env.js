@@ -26,6 +26,13 @@ if (!/^[0-9a-fA-F]{64}$/.test(encryptionKey)) {
 
 module.exports = {
   encryptionKey,
+  razorpay: {
+    keyId: process.env.RAZORPAY_KEY_ID || '',
+    keySecret: process.env.RAZORPAY_KEY_SECRET || '',
+    webhookSecret: process.env.RAZORPAY_WEBHOOK_SECRET || '',
+  },
+  // An online order that is not paid within this time is cancelled and its stock is released
+  paymentWindowMinutes: Number(process.env.PAYMENT_WINDOW_MINUTES) > 0 ? Number(process.env.PAYMENT_WINDOW_MINUTES) : 30,
   cloudinary: {
     cloudName: process.env.CLOUDINARY_CLOUD_NAME || '',
     apiKey: process.env.CLOUDINARY_API_KEY || '',
@@ -41,5 +48,7 @@ module.exports = {
   refreshDays: Number(process.env.REFRESH_TOKEN_DAYS) || 30,
   cookieSameSite: process.env.COOKIE_SAMESITE || 'lax', // 'lax' | 'strict' | 'none'
   smsProvider,
+  // Days after delivery before a seller's money becomes payable (return window)
+  settlementHoldDays: Number(process.env.SETTLEMENT_HOLD_DAYS) >= 0 && process.env.SETTLEMENT_HOLD_DAYS !== undefined ? Number(process.env.SETTLEMENT_HOLD_DAYS) : 7,
   exposeDevOtp: !isProd && smsProvider === 'console', // dev only: OTP is echoed in API response
 };

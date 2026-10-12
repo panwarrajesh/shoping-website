@@ -27,10 +27,17 @@ import SellerProductForm from './pages/seller/SellerProductForm';
 import SellerInventory from './pages/seller/SellerInventory';
 import ProductList from './pages/ProductList';
 import ProductDetail from './pages/ProductDetail';
+import SellerOrders from './pages/seller/SellerOrders';
+import SellerOrderDetail from './pages/seller/SellerOrderDetail';
+import Checkout from './pages/Checkout';
+import Orders from './pages/Orders';
+import OrderDetail from './pages/OrderDetail';
 import { bootstrap } from './store/authSlice';
 import { loadWishlistIds } from './store/wishlistSlice';
 import LocationSheet from './components/location/LocationSheet';
 import LocationSync from './components/location/LocationSync';
+import CartSync from './components/cart/CartSync';
+import CartPage from './pages/Cart';
 
 const soon = (title) => <ComingSoon title={title} to="/seller/dashboard" cta="Dashboard par jao" />;
 
@@ -43,6 +50,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <LocationSync />
+      <CartSync />
       <LocationSheet />
       <Routes>
         <Route element={<GuestRoute />}>
@@ -65,7 +73,8 @@ export default function App() {
             <Route path="/seller/products" element={<SellerProducts />} />
             <Route path="/seller/products/add" element={<SellerProductForm />} />
             <Route path="/seller/products/:id/edit" element={<SellerProductForm />} />
-            <Route path="/seller/orders" element={soon('Orders jaldi aa rahe hain')} />
+            <Route path="/seller/orders" element={<SellerOrders />} />
+            <Route path="/seller/orders/:id" element={<SellerOrderDetail />} />
             <Route path="/seller/inventory" element={<SellerInventory />} />
             <Route path="/seller/earnings" element={soon('Earnings jaldi aa rahe hain')} />
             <Route path="/seller/returns" element={soon('Returns jaldi aa rahe hain')} />
@@ -85,10 +94,12 @@ export default function App() {
           {/* Built in later steps: shown as "coming soon" instead of a broken page */}
           <Route path="/search" element={<ProductList />} />
           <Route path="/category/:slug" element={<ProductList />} />
-          <Route path="/cart" element={<ComingSoon title="Cart jaldi aa raha hai" />} />
+          <Route path="/cart" element={<CartPage />} />
 
           <Route element={<ProtectedRoute />}>
-            <Route path="/orders" element={<ComingSoon title="Orders jaldi aa rahe hain" />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/orders" element={<Orders />} />
+            <Route path="/orders/:id" element={<OrderDetail />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/profile/edit" element={<EditProfile />} />
             <Route path="/profile/password" element={<ChangePassword />} />

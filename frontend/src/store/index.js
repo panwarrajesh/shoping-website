@@ -1,9 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from './authSlice';
 import wishlistReducer from './wishlistSlice';
+import cartReducer from './cartSlice';
 import locationReducer, { LOCATION_STORAGE_KEY } from './locationSlice';
 
-export const store = configureStore({ reducer: { auth: authReducer, wishlist: wishlistReducer, location: locationReducer } });
+export const store = configureStore({ reducer: { auth: authReducer, wishlist: wishlistReducer, location: locationReducer, cart: cartReducer } });
 
 // Remember the chosen area on this device (a preference, not sensitive data)
 let last = store.getState().location.current;
